@@ -2,6 +2,7 @@
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 
+import { Logo } from "../component/logo";
 import { useFlow } from "../stack/app";
 
 export const Basket: ActivityComponentType = () => {
@@ -9,7 +10,7 @@ export const Basket: ActivityComponentType = () => {
   return (
     <AppScreen
       appBar={{
-        title: "장바구니",
+        renderLeft: Logo,
       }}
     >
       여기에서 장바구니를 관리합니다.

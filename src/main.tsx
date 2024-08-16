@@ -4,10 +4,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import "@stackflow/plugin-basic-ui/index.css";
 
-import { Stack } from "./stack/app";
+import { Stack as AppStack } from "./stack/app";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Stack />
+    <AppStack />
   </StrictMode>,
 );
