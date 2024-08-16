@@ -6,10 +6,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
-import { useFlow } from "@stackflow/react/future";
 import useEmblaCarousel from "embla-carousel-react";
 import { range } from "es-toolkit";
 import { useEffect, useState } from "react";
+
+import { useFlow } from "../stack/app";
 
 const imageSources = range(1, 9).map((index) => `/resource/home/${index}.jpg`);
 
@@ -50,12 +51,16 @@ export const Home: ActivityComponentType = () => {
           <button>
             <MagnifyingGlassIcon className="size-6" />
           </button>
-          <button>
+          <button
+            onClick={() => {
+              push("Basket", {});
+            }}
+          >
             <ShoppingBagIcon className="size-6" />
           </button>
         </div>
       </div>
-      <div className="fixed inset-0">
+      <div>
         <div className="embla overflow-hidden" ref={emblaRef}>
           <div className="embla__container flex h-screen flex-col">
             {imageSources.map((src, index) => (

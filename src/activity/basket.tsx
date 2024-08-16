@@ -7,7 +7,7 @@ import { useFlow } from "../stack/app";
 export const Basket: ActivityComponentType = () => {
   const { push } = useFlow();
   return (
-    <AppScreen>
+    <AppScreen appBar={{}}>
       여기에서 장바구니를 관리합니다.
       <button
         onClick={() => {
