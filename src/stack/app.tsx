@@ -4,12 +4,14 @@ import { stackflow } from "@stackflow/react";
 
 import { Basket } from "../activity/basket";
 import { Home } from "../activity/home";
+import { Menu } from "../activity/menu";
 import { Payment } from "../activity/payment";
 
 export const { Stack, useFlow, useStepFlow } = stackflow({
   activities: {
     Basket,
     Home,
+    Menu,
     Payment,
   },
   initialActivity: () => "Home",

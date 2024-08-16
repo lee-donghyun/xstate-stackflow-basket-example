@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import {
   Bars2Icon,
   MagnifyingGlassIcon,
@@ -5,6 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
+import { useFlow } from "@stackflow/react/future";
 import useEmblaCarousel from "embla-carousel-react";
 import { range } from "es-toolkit";
 import { useEffect, useState } from "react";
@@ -12,8 +14,11 @@ import { useEffect, useState } from "react";
 const imageSources = range(1, 9).map((index) => `/resource/home/${index}.jpg`);
 
 export const Home: ActivityComponentType = () => {
-  const [emblaRef, api] = useEmblaCarousel({ axis: "y" });
+  const { push } = useFlow();
+
   const [selected, setSelected] = useState(0);
+
+  const [emblaRef, api] = useEmblaCarousel({ axis: "y" });
 
   useEffect(() => {
     api?.on("select", (e) => {
@@ -27,7 +32,12 @@ export const Home: ActivityComponentType = () => {
   return (
     <AppScreen>
       <div className="fixed inset-x-0 top-0 z-10 flex items-start gap-2 px-4">
-        <button className="mt-4">
+        <button
+          className="mt-4"
+          onClick={() => {
+            push("Menu", {});
+          }}
+        >
           <Bars2Icon className="size-6" />
         </button>
         <div>
