@@ -2,17 +2,12 @@
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 
-import { Logo } from "../component/logo";
 import { useFlow } from "../stack/app";
 
 export const Basket: ActivityComponentType = () => {
   const { push } = useFlow();
   return (
-    <AppScreen
-      appBar={{
-        renderLeft: Logo,
-      }}
-    >
+    <AppScreen>
       여기에서 장바구니를 관리합니다.
       <button
         onClick={() => {
