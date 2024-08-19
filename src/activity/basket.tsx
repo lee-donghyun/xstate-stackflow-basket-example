@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { MinusIcon, PlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 import { useMachine } from "@xstate/react";
@@ -22,11 +22,25 @@ export const Basket: ActivityComponentType = () => {
 
   const checkoutAble = snapshot.context.items.some((item) => item.isSelected);
 
+  console.log(snapshot);
+
   return (
     <AppScreen appBar={{}}>
-      {snapshot.matches("loading") && <div>Loading...</div>}
-      {snapshot.matches({ loading: "retry" }) && (
-        <div>waiting for retry...</div>
+      {snapshot.context.error.map((error) => (
+        <p
+          className="flex items-center justify-between bg-red-200 p-1 text-sm text-red-900"
+          key={error.id}
+        >
+          {error.message}
+          <button onClick={() => send({ id: error.id, type: "remove-error" })}>
+            <XMarkIcon className="size-5" />
+          </button>
+        </p>
+      ))}
+      {snapshot.matches("loading") && (
+        <p className="animate-pulse bg-zinc-200 p-1 text-sm text-zinc-900">
+          LOADING...
+        </p>
       )}
       {snapshot.context.items.map((item) => (
         <div className="mb-5 flex items-center gap-5 px-5" key={item.id}>

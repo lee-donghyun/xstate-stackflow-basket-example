@@ -1,4 +1,3 @@
-import { debounce } from "es-toolkit";
 import { assign, fromPromise, setup } from "xstate";
 
 import { BasketItem, loadBasket, syncBasket } from "../model/basket-item";
@@ -14,14 +13,19 @@ export const basketMachine = setup({
     fetchBasket: fromPromise<BasketItem[], string>(({ input }) =>
       loadBasket(input),
     ),
+    syncBasket: fromPromise<BasketItem[], BasketItem[]>(({ input: items }) =>
+      syncBasket(items),
+    ),
   },
   types: {
     context: {} as {
+      error: { id: number; message: string }[];
       items: BasketItem[];
       onCheckout: (checkoutId: number) => void;
       user: string;
     },
     events: {} as
+      | { id: number; type: "remove-error" }
       | { item: BasketItem; type: "dec-qty" }
       | { item: BasketItem; type: "deselect" }
       | { item: BasketItem; type: "inc-qty" }
@@ -31,6 +35,7 @@ export const basketMachine = setup({
   },
 }).createMachine({
   context: (context) => ({
+    error: [],
     items: [],
     onCheckout: context.input.onCheckout,
     retryCount: 0,
@@ -45,20 +50,16 @@ export const basketMachine = setup({
           target: "#loading.checkout",
         },
         "dec-qty": {
-          actions: [
-            assign({
-              items: ({ context, event }) =>
-                context.items.map((item) =>
-                  item.id === event.item.id
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item,
-                ),
-            }),
-            debounce(({ context }) => {
-              void syncBasket(context.items);
-            }, 1000),
-          ],
+          actions: assign({
+            items: ({ context, event }) =>
+              context.items.map((item) =>
+                item.id === event.item.id
+                  ? { ...item, quantity: item.quantity - 1 }
+                  : item,
+              ),
+          }),
           guard: ({ event }) => event.item.quantity > 1,
+          target: "#loading.syncBasket",
         },
         deselect: {
           actions: assign({
@@ -71,19 +72,21 @@ export const basketMachine = setup({
           }),
         },
         "inc-qty": {
-          actions: [
-            assign({
-              items: ({ context, event }) =>
-                context.items.map((item) =>
-                  item.id === event.item.id
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item,
-                ),
-            }),
-            debounce(({ context }) => {
-              void syncBasket(context.items);
-            }, 1000),
-          ],
+          actions: assign({
+            items: ({ context, event }) =>
+              context.items.map((item) =>
+                item.id === event.item.id
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item,
+              ),
+          }),
+          target: "#loading.syncBasket",
+        },
+        "remove-error": {
+          actions: assign({
+            error: ({ context, event }) =>
+              context.error.filter((error) => error.id !== event.id),
+          }),
         },
         select: {
           actions: assign({
@@ -111,8 +114,15 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
-              actions: assign({ items: [] }),
-              target: "#loading.retry",
+              actions: assign({
+                error: ({ context }) =>
+                  context.error.concat({
+                    id: context.error.length,
+                    message: "FAILED TO LOAD BASKET. RETRYING...",
+                  }),
+                items: [],
+              }),
+              target: "#loading.retryBasket",
             },
             src: "fetchBasket",
           },
@@ -128,12 +138,19 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
+              actions: assign({
+                error: ({ context }) =>
+                  context.error.concat({
+                    id: context.error.length,
+                    message: "FAILED TO CHECKOUT. RETRYING...",
+                  }),
+              }),
               target: "#loading.retryCheckout",
             },
             src: "createCheckout",
           },
         },
-        retry: {
+        retryBasket: {
           after: {
             [RETRY_DELAY]: { target: "#loading.basket" },
           },
@@ -141,6 +158,25 @@ export const basketMachine = setup({
         retryCheckout: {
           after: {
             [RETRY_DELAY]: { target: "#loading.checkout" },
+          },
+        },
+        syncBasket: {
+          invoke: {
+            input: ({ context }) => context.items,
+            onDone: {
+              target: "#root.idle",
+            },
+            onError: {
+              actions: assign({
+                error: ({ context }) =>
+                  context.error.concat({
+                    id: context.error.length,
+                    message: "FAILED TO SYNC BASKET. RELOADING...",
+                  }),
+              }),
+              target: "#loading.basket",
+            },
+            src: "syncBasket",
           },
         },
       },

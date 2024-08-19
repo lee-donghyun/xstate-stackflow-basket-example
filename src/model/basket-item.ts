@@ -48,14 +48,12 @@ export const loadBasket = (user: string) =>
   });
 
 export const syncBasket = (items: BasketItem[]) =>
-  new Promise<void>((resolve, reject) => {
+  new Promise<BasketItem[]>((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() > 0.2) {
-        resolve();
-        console.log("Basket synced", items);
+        resolve(items);
       } else {
         reject(new Error("Failed to sync basket"));
-        console.error("Basket sync failed", items);
       }
     }, 1000);
   });
