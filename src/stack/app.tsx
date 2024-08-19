@@ -19,6 +19,8 @@ export const { Stack, useFlow, useStepFlow } = stackflow({
     basicRendererPlugin(),
     basicUIPlugin({
       appBar: { height: "56px" },
+      rootClassName:
+        "[&>div[data-stackflow-component-name='AppScreen']]:!block",
       theme: "cupertino",
     }),
   ],

@@ -22,12 +22,14 @@ export const Home: ActivityComponentType = () => {
   const [emblaRef, api] = useEmblaCarousel({ axis: "y" });
 
   useEffect(() => {
-    api?.on("select", (e) => {
-      setSelected(e.selectedScrollSnap());
-    });
-    return () => {
-      api?.destroy();
-    };
+    if (api) {
+      api.on("select", (e) => {
+        setSelected(e.selectedScrollSnap());
+      });
+      return () => {
+        api.destroy();
+      };
+    }
   }, [api]);
 
   return (
@@ -61,8 +63,8 @@ export const Home: ActivityComponentType = () => {
         </div>
       </div>
       <div>
-        <div className="embla overflow-hidden" ref={emblaRef}>
-          <div className="embla__container flex h-screen flex-col">
+        <div className="embla fixed inset-0 overflow-hidden" ref={emblaRef}>
+          <div className="embla__container flex h-full flex-col">
             {imageSources.map((src, index) => (
               <div
                 className="embla__slide min-h-0 shrink-0 grow-0 basis-[100vh]"
