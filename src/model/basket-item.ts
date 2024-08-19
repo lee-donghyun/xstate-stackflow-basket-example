@@ -2,6 +2,7 @@ export interface BasketItem {
   discountedPrice: number;
   id: number;
   name: string;
-  option: { name: string; value: string };
+  options: { name: string; value: string }[];
   price: number;
+  quantity: number;
 }
