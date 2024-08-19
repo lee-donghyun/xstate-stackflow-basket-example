@@ -120,7 +120,6 @@ export const basketMachine = setup({
                     id: context.error.length,
                     message: "FAILED TO LOAD BASKET. RETRYING...",
                   }),
-                items: [],
               }),
               target: "#loading.retryBasket",
             },
