@@ -8,8 +8,9 @@ import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 import useEmblaCarousel from "embla-carousel-react";
 import { range } from "es-toolkit";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { useObserver } from "../hook/useObserver";
 import { useFlow } from "../stack/app";
 
 const imageSources = range(1, 9).map((index) => `/resource/home/${index}.jpg`);
@@ -18,13 +19,18 @@ export const Home: ActivityComponentType = () => {
   const { push } = useFlow();
 
   const [selected, setSelected] = useState(0);
+  const selectedRef = useRef(0);
 
   const [emblaRef, api] = useEmblaCarousel({ axis: "y" });
+  const { ref } = useObserver<HTMLDivElement>(() => {
+    api?.scrollTo(selectedRef.current, true);
+  }, [api]);
 
   useEffect(() => {
     if (api) {
       api.on("select", (e) => {
         setSelected(e.selectedScrollSnap());
+        selectedRef.current = e.selectedScrollSnap();
       });
       return () => {
         api.destroy();
@@ -62,20 +68,21 @@ export const Home: ActivityComponentType = () => {
           </button>
         </div>
       </div>
-      <div>
+      <div ref={ref}>
         <div className="embla fixed inset-0 overflow-hidden" ref={emblaRef}>
           <div className="embla__container flex h-full flex-col">
             {imageSources.map((src, index) => (
-              <div
+              <button
                 className="embla__slide min-h-0 shrink-0 grow-0 basis-[100vh]"
                 key={src}
+                onClick={() => push("ItemList", { itemId: index })}
               >
                 <img
                   alt="cover"
                   className={`size-full object-cover duration-300 ${index < selected ? "scale-75" : "scale-100"}`}
                   src={src}
                 />
-              </div>
+              </button>
             ))}
           </div>
         </div>

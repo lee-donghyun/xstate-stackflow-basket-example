@@ -4,6 +4,7 @@ import { stackflow } from "@stackflow/react";
 
 import { Basket } from "../activity/basket";
 import { Home } from "../activity/home";
+import { ItemList } from "../activity/item-list";
 import { Menu } from "../activity/menu";
 import { Payment } from "../activity/payment";
 
@@ -11,6 +12,7 @@ export const { Stack, useFlow, useStepFlow } = stackflow({
   activities: {
     Basket,
     Home,
+    ItemList,
     Menu,
     Payment,
   },
@@ -18,9 +20,7 @@ export const { Stack, useFlow, useStepFlow } = stackflow({
   plugins: [
     basicRendererPlugin(),
     basicUIPlugin({
-      appBar: { height: "56px" },
-      rootClassName:
-        "[&>div[data-stackflow-component-name='AppScreen']]:!block",
+      appBar: { borderColor: "#FFF", height: "56px" },
       theme: "cupertino",
     }),
   ],
