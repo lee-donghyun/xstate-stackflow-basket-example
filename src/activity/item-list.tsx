@@ -2,12 +2,14 @@
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 
-export const ItemList: ActivityComponentType<{ itemId: number }> = ({
-  params: { itemId },
-}) => {
+export const ItemList: ActivityComponentType<{
+  category?: string;
+  itemId?: number;
+}> = ({ params }) => {
   return (
     <AppScreen appBar={{}}>
-      여기에서 아이템에 관련된 리스트를 보여줍니다. itemId: {itemId}
+      여기에서 아이템에 관련된 리스트를 보여줍니다.
+      {JSON.stringify(params)}
     </AppScreen>
   );
 };

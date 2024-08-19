@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { BottomSheet } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 import { useState } from "react";
+
+import { useFlow } from "../stack/app";
 
 const CATEGORIES = [
   [
@@ -33,8 +36,11 @@ const CATEGORIES = [
 ] as const;
 
 export const Menu: ActivityComponentType = () => {
+  const { push } = useFlow();
+
   const [selected, setSelected] = useState(0);
   const [, subCategories] = CATEGORIES[selected];
+
   return (
     <BottomSheet borderRadius="0">
       <div className="p-5">
@@ -52,7 +58,13 @@ export const Menu: ActivityComponentType = () => {
           </div>
           <ul className="h-80 space-y-1 pt-6 text-sm font-light">
             {subCategories.map((subCategory) => (
-              <li key={subCategory}>{subCategory}</li>
+              <li key={subCategory}>
+                <button
+                  onClick={() => push("ItemList", { category: subCategory })}
+                >
+                  {subCategory}
+                </button>
+              </li>
             ))}
           </ul>
         </div>
