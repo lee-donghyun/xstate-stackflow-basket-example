@@ -50,10 +50,10 @@ export const Home: ActivityComponentType = () => {
           <Bars2Icon className="size-6" />
         </button>
         <div>
-          <span className="mt-1 inline-block text-8xl font-medium leading-none tracking-tighter">
+          <span className="mt-1 inline-block font-serif text-8xl font-light leading-none tracking-tighter">
             SxSS
           </span>
-          <p className="ml-1 mt-1 text-sm font-light">Stackflow XState Shop</p>
+          <p className="ml-1 mt-1 text-xs font-light">STACKFLOW XSTATE SHOP</p>
         </div>
         <div className="mt-4 flex flex-1 justify-end gap-4">
           <button

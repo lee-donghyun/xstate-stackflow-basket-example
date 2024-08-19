@@ -1,4 +1,5 @@
 import { basicUIPlugin } from "@stackflow/plugin-basic-ui";
+import { devtoolsPlugin } from "@stackflow/plugin-devtools";
 import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
@@ -25,6 +26,7 @@ export const { Stack, useFlow, useStepFlow } = stackflow({
       appBar: { borderColor: "#FFF", height: "56px" },
       theme: "cupertino",
     }),
+    devtoolsPlugin(),
   ],
   transitionDuration: 350,
 });
