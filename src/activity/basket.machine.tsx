@@ -38,7 +38,6 @@ export const basketMachine = setup({
     error: [],
     items: [],
     onCheckout: context.input.onCheckout,
-    retryCount: 0,
     user: context.input.user,
   }),
   id: "root",
