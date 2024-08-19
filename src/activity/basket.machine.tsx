@@ -1,6 +1,7 @@
+import { debounce } from "es-toolkit";
 import { assign, fromPromise, setup } from "xstate";
 
-import { BasketItem, loadBasket } from "../model/basket-item";
+import { BasketItem, loadBasket, syncBasket } from "../model/basket-item";
 import { createCheckout } from "../model/checkout";
 
 const RETRY_DELAY = 1000;
@@ -44,14 +45,19 @@ export const basketMachine = setup({
           target: "#loading.checkout",
         },
         "dec-qty": {
-          actions: assign({
-            items: ({ context, event }) =>
-              context.items.map((item) =>
-                item.id === event.item.id
-                  ? { ...item, quantity: item.quantity - 1 }
-                  : item,
-              ),
-          }),
+          actions: [
+            assign({
+              items: ({ context, event }) =>
+                context.items.map((item) =>
+                  item.id === event.item.id
+                    ? { ...item, quantity: item.quantity - 1 }
+                    : item,
+                ),
+            }),
+            debounce(({ context }) => {
+              void syncBasket(context.items);
+            }, 1000),
+          ],
           guard: ({ event }) => event.item.quantity > 1,
         },
         deselect: {
@@ -65,14 +71,19 @@ export const basketMachine = setup({
           }),
         },
         "inc-qty": {
-          actions: assign({
-            items: ({ context, event }) =>
-              context.items.map((item) =>
-                item.id === event.item.id
-                  ? { ...item, quantity: item.quantity + 1 }
-                  : item,
-              ),
-          }),
+          actions: [
+            assign({
+              items: ({ context, event }) =>
+                context.items.map((item) =>
+                  item.id === event.item.id
+                    ? { ...item, quantity: item.quantity + 1 }
+                    : item,
+                ),
+            }),
+            debounce(({ context }) => {
+              void syncBasket(context.items);
+            }, 1000),
+          ],
         },
         select: {
           actions: assign({
