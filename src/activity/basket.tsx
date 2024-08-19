@@ -22,8 +22,6 @@ export const Basket: ActivityComponentType = () => {
 
   const checkoutAble = snapshot.context.items.some((item) => item.isSelected);
 
-  console.log(snapshot);
-
   return (
     <AppScreen appBar={{}}>
       {snapshot.matches("loading") && <div>Loading...</div>}

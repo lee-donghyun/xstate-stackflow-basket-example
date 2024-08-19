@@ -12,7 +12,7 @@ export interface BasketItem {
 export const loadBasket = (user: string) =>
   new Promise<BasketItem[]>((resolve, reject) => {
     setTimeout(() => {
-      if (Math.random() > 0.999) {
+      if (Math.random() > 0.2) {
         resolve([
           {
             id: 1,
