@@ -56,7 +56,11 @@ export const Home: ActivityComponentType = () => {
           <p className="ml-1 mt-1 text-sm font-light">Stackflow XState Shop</p>
         </div>
         <div className="mt-4 flex flex-1 justify-end gap-4">
-          <button>
+          <button
+            onClick={() => {
+              push("Search", {});
+            }}
+          >
             <MagnifyingGlassIcon className="size-6" />
           </button>
           <button

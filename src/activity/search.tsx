@@ -1,31 +1,17 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable react/prop-types */
-import {
-  MagnifyingGlassIcon,
-  ShoppingBagIcon,
-} from "@heroicons/react/24/outline";
+import { ShoppingBagIcon } from "@heroicons/react/24/outline";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 
 import { useFlow } from "../stack/app";
 
-export const ItemList: ActivityComponentType<{
-  category?: string;
-  itemId?: number;
-}> = ({ params }) => {
+export const Search: ActivityComponentType = () => {
   const { push } = useFlow();
   return (
     <AppScreen
       appBar={{
         renderRight: () => (
           <div className="flex flex-1 justify-end gap-4 px-2">
-            <button
-              onClick={() => {
-                push("Search", {});
-              }}
-            >
-              <MagnifyingGlassIcon className="size-6" />
-            </button>
             <button
               onClick={() => {
                 push("Basket", {});
@@ -37,8 +23,7 @@ export const ItemList: ActivityComponentType<{
         ),
       }}
     >
-      여기에서 아이템에 관련된 리스트를 보여줍니다.
-      {JSON.stringify(params)}
+      여기에 검색창이 등장합니다.
     </AppScreen>
   );
 };

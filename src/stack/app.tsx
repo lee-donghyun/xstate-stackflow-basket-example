@@ -7,6 +7,7 @@ import { Home } from "../activity/home";
 import { ItemList } from "../activity/item-list";
 import { Menu } from "../activity/menu";
 import { Payment } from "../activity/payment";
+import { Search } from "../activity/search";
 
 export const { Stack, useFlow, useStepFlow } = stackflow({
   activities: {
@@ -15,6 +16,7 @@ export const { Stack, useFlow, useStepFlow } = stackflow({
     ItemList,
     Menu,
     Payment,
+    Search,
   },
   initialActivity: () => "Home",
   plugins: [
