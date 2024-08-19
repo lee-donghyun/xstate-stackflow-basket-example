@@ -12,6 +12,8 @@ export const Basket: ActivityComponentType = () => {
     .filter((item) => item.isSelected)
     .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+  const checkoutAble = snapshot.context.items.some((item) => item.isSelected);
+
   return (
     <AppScreen appBar={{}}>
       {snapshot.matches("loading") && <div>Loading...</div>}
@@ -35,10 +37,10 @@ export const Basket: ActivityComponentType = () => {
           <div className="flex flex-col gap-1 p-3">
             <p className="font-bold">{item.name}</p>
             <div className="flex items-center gap-2">
-              <p>${item.price}</p>
+              <p>$ {item.price}</p>
               {item.originalPrice && (
                 <p className="text-sm text-zinc-500 line-through">
-                  ${item.originalPrice}
+                  $ {item.originalPrice}
                 </p>
               )}
             </div>
@@ -64,8 +66,15 @@ export const Basket: ActivityComponentType = () => {
           </div>
         </div>
       ))}
-      <div className="mt-10 flex justify-end border-t border-black p-5">
+      <div className="mt-10 flex flex-col items-end border-t border-black p-5">
         <p className="font-medium">Total: ${totalPrice.toFixed(2)}</p>
+        <button
+          className="mt-3 block bg-black px-4 py-1 text-xl font-light text-white disabled:opacity-30"
+          disabled={!checkoutAble}
+          onClick={() => send({ type: "checkout" })}
+        >
+          CHECKOUT
+        </button>
       </div>
     </AppScreen>
   );

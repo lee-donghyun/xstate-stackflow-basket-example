@@ -1,47 +1,13 @@
 import { assign, fromPromise, setup } from "xstate";
 
-import { BasketItem } from "../model/basket-item";
-
-const loadBasket = (user: string) =>
-  new Promise<BasketItem[]>((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() > 0.2) {
-        resolve([
-          {
-            id: 1,
-            isSelected: true,
-            isSoldOut: false,
-            name: `ITEM FOR USER${user}`,
-            options: [
-              { name: "Color", value: "BLACK" },
-              { name: "Size", value: "M" },
-            ],
-            originalPrice: 24.99,
-            price: 13.6,
-            quantity: 1,
-          },
-          {
-            id: 2,
-            isSelected: true,
-            isSoldOut: false,
-            name: `ANOTHER ITEM FOR USER${user}`,
-            options: [
-              { name: "Color", value: "GRAY" },
-              { name: "Size", value: "XS" },
-            ],
-            originalPrice: 99.99,
-            price: 87.6,
-            quantity: 1,
-          },
-        ]);
-      } else {
-        reject(new Error("Failed to load basket"));
-      }
-    }, 1000);
-  });
+import { BasketItem, loadBasket } from "../model/basket-item";
+import { createCheckout } from "../model/checkout";
 
 export const basketMachine = setup({
   actors: {
+    createCheckout: fromPromise<number, BasketItem[]>(({ input: items }) =>
+      createCheckout(items),
+    ),
     fetchBasket: fromPromise<BasketItem[], string>(({ input }) =>
       loadBasket(input),
     ),
@@ -55,7 +21,8 @@ export const basketMachine = setup({
       | { item: BasketItem; type: "dec-qty" }
       | { item: BasketItem; type: "deselect" }
       | { item: BasketItem; type: "inc-qty" }
-      | { item: BasketItem; type: "select" },
+      | { item: BasketItem; type: "select" }
+      | { type: "checkout" },
     input: {} as { user: string },
   },
 }).createMachine({
@@ -63,10 +30,17 @@ export const basketMachine = setup({
     items: [],
     user: context.input.user,
   }),
+  id: "root",
   initial: "loading",
   states: {
+    checkout: {
+      type: "final",
+    },
     idle: {
       on: {
+        checkout: {
+          target: "#loading.checkout",
+        },
         "dec-qty": {
           actions: assign({
             items: ({ context, event }) =>
@@ -112,28 +86,49 @@ export const basketMachine = setup({
     },
     loading: {
       id: "loading",
-      initial: "pending",
-      invoke: {
-        input: ({ context }) => context.user,
-        onDone: {
-          actions: assign({
-            items: ({ event }) => event.output,
-          }),
-          target: "idle",
-        },
-        onError: {
-          actions: assign({
-            items: [],
-          }),
-          target: ".retry",
-        },
-        src: "fetchBasket",
-      },
+      initial: "basket",
       states: {
-        pending: {},
+        basket: {
+          invoke: {
+            input: ({ context }) => context.user,
+            onDone: {
+              actions: assign({
+                items: ({ event }) => event.output,
+              }),
+              target: "#root.idle",
+            },
+            onError: {
+              actions: assign({
+                items: [],
+              }),
+              target: "#loading.retry",
+            },
+            src: "fetchBasket",
+          },
+        },
+        checkout: {
+          invoke: {
+            input: ({ context }) => context.items,
+            onDone: {
+              actions: ({ event }) => {
+                console.log("checkout done with id", event);
+              },
+              target: "#root.checkout",
+            },
+            onError: {
+              target: "#loading.retryCheckout",
+            },
+            src: "createCheckout",
+          },
+        },
         retry: {
           after: {
-            5000: { target: "#loading" },
+            5000: { target: "#loading.basket" },
+          },
+        },
+        retryCheckout: {
+          after: {
+            5000: { target: "#loading.checkout" },
           },
         },
       },
