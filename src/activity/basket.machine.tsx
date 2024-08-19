@@ -3,7 +3,6 @@ import { assign, fromPromise, setup } from "xstate";
 import { BasketItem, loadBasket } from "../model/basket-item";
 import { createCheckout } from "../model/checkout";
 
-const MAX_RETRY = 3;
 const RETRY_DELAY = 1000;
 
 export const basketMachine = setup({
@@ -19,7 +18,6 @@ export const basketMachine = setup({
     context: {} as {
       items: BasketItem[];
       onCheckout: (checkoutId: number) => void;
-      retryCount: number;
       user: string;
     },
     events: {} as
@@ -89,16 +87,10 @@ export const basketMachine = setup({
       },
     },
     loading: {
-      entry: assign({
-        retryCount: 0,
-      }),
       id: "loading",
       initial: "basket",
       states: {
         basket: {
-          entry: assign({
-            retryCount: ({ context }) => context.retryCount + 1,
-          }),
           invoke: {
             input: ({ context }) => context.user,
             onDone: {
@@ -108,19 +100,13 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
-              actions: assign({
-                items: [],
-              }),
-              guard: ({ context }) => context.retryCount < MAX_RETRY,
+              actions: assign({ items: [] }),
               target: "#loading.retry",
             },
             src: "fetchBasket",
           },
         },
         checkout: {
-          entry: assign({
-            retryCount: ({ context }) => context.retryCount + 1,
-          }),
           invoke: {
             input: ({ context }) => context.items,
             onDone: {
@@ -131,7 +117,6 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
-              guard: ({ context }) => context.retryCount < MAX_RETRY,
               target: "#loading.retryCheckout",
             },
             src: "createCheckout",
@@ -141,17 +126,11 @@ export const basketMachine = setup({
           after: {
             [RETRY_DELAY]: { target: "#loading.basket" },
           },
-          entry: assign({
-            retryCount: ({ context }) => context.retryCount + 1,
-          }),
         },
         retryCheckout: {
           after: {
             [RETRY_DELAY]: { target: "#loading.checkout" },
           },
-          entry: assign({
-            retryCount: ({ context: { retryCount } }) => retryCount + 1,
-          }),
         },
       },
     },
