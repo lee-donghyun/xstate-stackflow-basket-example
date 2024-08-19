@@ -1,18 +1,28 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 import { useMachine } from "@xstate/react";
 
+import { useFlow } from "../stack/app";
 import { basketMachine } from "./basket.machine";
 
 export const Basket: ActivityComponentType = () => {
-  const [snapshot, send] = useMachine(basketMachine, { input: { user: "" } });
+  const { push } = useFlow();
+  const [snapshot, send] = useMachine(basketMachine, {
+    input: {
+      onCheckout: (checkoutId) => push("Checkout", { checkoutId }),
+      user: "",
+    },
+  });
 
   const totalPrice = snapshot.context.items
     .filter((item) => item.isSelected)
     .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const checkoutAble = snapshot.context.items.some((item) => item.isSelected);
+
+  console.log(snapshot);
 
   return (
     <AppScreen appBar={{}}>

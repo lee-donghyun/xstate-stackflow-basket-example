@@ -4,19 +4,19 @@ import { basicRendererPlugin } from "@stackflow/plugin-renderer-basic";
 import { stackflow } from "@stackflow/react";
 
 import { Basket } from "../activity/basket";
+import { Checkout } from "../activity/checkout";
 import { Home } from "../activity/home";
 import { ItemList } from "../activity/item-list";
 import { Menu } from "../activity/menu";
-import { Payment } from "../activity/payment";
 import { Search } from "../activity/search";
 
 export const { Stack, useFlow, useStepFlow } = stackflow({
   activities: {
     Basket,
+    Checkout,
     Home,
     ItemList,
     Menu,
-    Payment,
     Search,
   },
   initialActivity: () => "Home",
