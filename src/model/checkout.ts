@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { BasketItem } from "./basket-item";
 
 export const createCheckout = (items: BasketItem[]) =>
