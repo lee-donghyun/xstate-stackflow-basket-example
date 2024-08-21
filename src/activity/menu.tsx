@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { BottomSheet } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 import { useState } from "react";

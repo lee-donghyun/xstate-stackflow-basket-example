@@ -64,8 +64,8 @@ importers:
         specifier: ^9.9.0
         version: 9.9.0(jiti@1.21.6)
       eslint-config-react-app-essentials:
-        specifier: ^17.2.0
-        version: 17.2.0(eslint@9.9.0(jiti@1.21.6))(prettier@3.3.3)(typescript@5.5.4)
+        specifier: ^17.3.0
+        version: 17.3.0(eslint@9.9.0(jiti@1.21.6))(prettier@3.3.3)(typescript@5.5.4)
       eslint-plugin-react-hooks:
         specifier: ^5.1.0-rc.0
         version: 5.1.0-rc-fb9a90fa48-20240614(eslint@9.9.0(jiti@1.21.6))
@@ -1001,8 +1001,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-react-app-essentials@17.2.0:
-    resolution: {integrity: sha512-hCBJW3S0j+fGxNx5C9gQe/EEs0+PUcpf/eH38LdCptna/+183DRrdY81PbuHvpCgVBpK2iGl4PZy1UjcACWvrA==}
+  eslint-config-react-app-essentials@17.3.0:
+    resolution: {integrity: sha512-4k4uTEEosvVlhyG2Guv50tsoubLAjOfZLLWaC36W9YGtIi045twwfRDREcIG6Dfjmc29Ip1sCmFUzW8Gm+Ta5g==}
     peerDependencies:
       eslint: ^9.8.0
       prettier: ^3.3.3
@@ -3086,7 +3086,7 @@ snapshots:
     dependencies:
       eslint: 9.9.0(jiti@1.21.6)
 
-  eslint-config-react-app-essentials@17.2.0(eslint@9.9.0(jiti@1.21.6))(prettier@3.3.3)(typescript@5.5.4):
+  eslint-config-react-app-essentials@17.3.0(eslint@9.9.0(jiti@1.21.6))(prettier@3.3.3)(typescript@5.5.4):
     dependencies:
       '@eslint/js': 9.9.0
       '@types/eslint__js': 8.42.3

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable react/prop-types */
 import {
   MagnifyingGlassIcon,
   ShoppingBagIcon,

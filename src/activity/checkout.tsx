@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { AppScreen } from "@stackflow/plugin-basic-ui";
 import { ActivityComponentType } from "@stackflow/react";
 
