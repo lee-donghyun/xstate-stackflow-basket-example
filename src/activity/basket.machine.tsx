@@ -42,6 +42,14 @@ export const basketMachine = setup({
   }),
   id: "root",
   initial: "loading",
+  on: {
+    "remove-error": {
+      actions: assign({
+        error: ({ context, event }) =>
+          context.error.filter((error) => error.id !== event.id),
+      }),
+    },
+  },
   states: {
     idle: {
       on: {
@@ -80,12 +88,6 @@ export const basketMachine = setup({
               ),
           }),
           target: "#loading.syncBasket",
-        },
-        "remove-error": {
-          actions: assign({
-            error: ({ context, event }) =>
-              context.error.filter((error) => error.id !== event.id),
-          }),
         },
         select: {
           actions: assign({
