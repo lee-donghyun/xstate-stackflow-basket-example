@@ -15,9 +15,12 @@ export const Basket: ActivityComponentType = () => {
     },
   });
 
-  const totalPrice = snapshot.context.items
-    .filter((item) => item.isSelected)
-    .reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const totalPrice =
+    snapshot.matches("loading") && !snapshot.matches({ loading: "checkout" })
+      ? null
+      : snapshot.context.items
+          .filter((item) => item.isSelected)
+          .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const checkoutAble = snapshot.context.items.some((item) => item.isSelected);
 
@@ -87,8 +90,14 @@ export const Basket: ActivityComponentType = () => {
           </div>
         </div>
       ))}
-      <div className="mt-10 flex flex-col items-end border-t border-black p-5">
-        <p className="font-medium">Total: ${totalPrice.toFixed(2)}</p>
+      <div className="pt-40"></div>
+      <div className="fixed inset-x-0 bottom-0 flex flex-col items-end border-t border-black bg-white p-5 pb-8">
+        <p className="font-medium">
+          Total:
+          {typeof totalPrice === "number"
+            ? ` $ ${totalPrice.toFixed(2)}`
+            : " $ ____"}
+        </p>
         <button
           className="mt-3 block bg-black px-4 py-1 text-xl font-light text-white disabled:opacity-30"
           disabled={!checkoutAble}
