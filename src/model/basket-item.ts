@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-promise-reject-errors */
 export interface BasketItem {
   id: number;
   isSelected: boolean;
@@ -50,10 +51,18 @@ export const loadBasket = (user: string) =>
 export const syncBasket = (items: BasketItem[]) =>
   new Promise<BasketItem[]>((resolve, reject) => {
     setTimeout(() => {
-      if (Math.random() > 0.2) {
+      const r = Math.random();
+      if (r > 0.4) {
         resolve(items);
+      } else if (r > 0.2) {
+        reject({
+          items: items.map((item, index) =>
+            index === 0 ? { ...item, isSoldOut: true } : item,
+          ),
+          type: "NO_ITEM",
+        });
       } else {
-        reject(new Error("Failed to sync basket"));
+        reject({ type: "NETWORK" });
       }
     }, 1000);
   });

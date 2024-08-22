@@ -6,6 +6,15 @@ import { createCheckout } from "../model/checkout";
 const RETRY_DELAY = 1000;
 
 export const basketMachine = setup({
+  actions: {
+    concatError: assign({
+      error: ({ context }, message: string) =>
+        context.error.concat({
+          id: context.error.length,
+          message,
+        }),
+    }),
+  },
   actors: {
     createCheckout: fromPromise<number, BasketItem[]>(({ input: items }) =>
       createCheckout(items),
@@ -115,13 +124,12 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
-              actions: assign({
-                error: ({ context }) =>
-                  context.error.concat({
-                    id: context.error.length,
-                    message: "FAILED TO LOAD BASKET. RETRYING...",
-                  }),
-              }),
+              actions: [
+                {
+                  params: "FAILED TO LOAD BASKET. RETRYING...",
+                  type: "concatError",
+                },
+              ],
               target: "#loading.retryBasket",
             },
             src: "fetchBasket",
@@ -138,13 +146,12 @@ export const basketMachine = setup({
               target: "#root.idle",
             },
             onError: {
-              actions: assign({
-                error: ({ context }) =>
-                  context.error.concat({
-                    id: context.error.length,
-                    message: "FAILED TO CHECKOUT. RETRYING...",
-                  }),
-              }),
+              actions: [
+                {
+                  params: "FAILED TO CHECKOUT. RETRYING...",
+                  type: "concatError",
+                },
+              ],
               target: "#loading.retryCheckout",
             },
             src: "createCheckout",
@@ -166,16 +173,32 @@ export const basketMachine = setup({
             onDone: {
               target: "#root.idle",
             },
-            onError: {
-              actions: assign({
-                error: ({ context }) =>
-                  context.error.concat({
-                    id: context.error.length,
-                    message: "FAILED TO SYNC BASKET. RELOADING...",
+            onError: [
+              {
+                actions: [
+                  {
+                    params: "OUT OF STOCK.",
+                    type: "concatError",
+                  },
+                  assign({
+                    items: ({ event }) =>
+                      (event.error as { items: BasketItem[] }).items,
                   }),
-              }),
-              target: "#loading.basket",
-            },
+                ],
+                guard: ({ event }) =>
+                  (event.error as { type: string }).type === "NO_ITEM",
+                target: "#root.idle",
+              },
+              {
+                actions: {
+                  params: "FAILED TO SYNC BASKET. RELOADING...",
+                  type: "concatError",
+                },
+                guard: ({ event }) =>
+                  (event.error as { type: string }).type === "NETWORK",
+                target: "#loading.basket",
+              },
+            ],
             src: "syncBasket",
           },
         },
